@@ -42,7 +42,7 @@ var Shapes = {
             ]},
 
     Line:  {
-        Colour: "blue",
+        Colour: "yellow",
         Orientations:[
               { Pixels:  [{Xoffset:1, Yoffset:0},
                     {Xoffset:1, Yoffset:1},
@@ -66,7 +66,7 @@ var Shapes = {
            {Pixels : [{Xoffset:0, Yoffset:1},
                     {Xoffset:1, Yoffset:1},
                     {Xoffset:2, Yoffset:1},
-                    {Xoffset:3, Yoffset:2}
+                    {Xoffset:2, Yoffset:2}
                 ]},
            {Pixels:  [{Xoffset:0, Yoffset:0},
                     {Xoffset:1, Yoffset:0},
@@ -89,7 +89,7 @@ var Shapes = {
            {Pixels : [{Xoffset:0, Yoffset:1},
                     {Xoffset:1, Yoffset:1},
                     {Xoffset:2, Yoffset:1},
-                    {Xoffset:3, Yoffset:0}
+                    {Xoffset:2, Yoffset:0}
                 ]},
            {Pixels:  [{Xoffset:1, Yoffset:0},
                     {Xoffset:2, Yoffset:0},
@@ -117,7 +117,7 @@ var Shapes = {
                     {Xoffset:0, Yoffset:2}
                 ]}
             ]},
-    RightZ: {        Colour: "orange",
+    RightZ: {        Colour: "cyan",
         Orientations: [
                 {Pixels : [{Xoffset:1, Yoffset:0},
                           {Xoffset:2, Yoffset:0},
@@ -126,8 +126,8 @@ var Shapes = {
                 ]},
                 {Pixels : [{Xoffset:1, Yoffset:0},
                     {Xoffset:1, Yoffset:1},
-                    {Xoffset:1, Yoffset:2},
-                    {Xoffset:20, Yoffset:2}
+                    {Xoffset:2, Yoffset:1},
+                    {Xoffset:2, Yoffset:2}
                 ]}
             ]}
 };
@@ -151,7 +151,7 @@ var Event = {
             break;
             case "ArrowRight": ActiveBlock.MoveRight();
             break;
-            case "ArrowDown": ActiveBlock.MoveDrop();
+            case "ArrowDown": ActiveBlock.Drop();
             break;
             case "ArrowUp": ActiveBlock.Rotate();
         }
@@ -261,13 +261,15 @@ var ActiveBlock = function() {
     var Rotation = 0;   
 
     MoveDown = function() {
-        if (Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation)) //this, Translate (x, y, rot)
+        if (Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation)) {
             BlockLanded();
-        else{
-            Clear();
-            Ypos++;
-            Draw();
+            return true;
         }
+
+        Clear();
+        Ypos++;
+        Draw();
+        return false;
         Debug("down");
     };
 
@@ -291,12 +293,15 @@ var ActiveBlock = function() {
     };
 
     Drop = function(){
-        while (!Board.CheckForCollision())
+        var landed=false;
+        while (!landed){
+            landed = MoveDown;
+        }
         Debug("drop");
     };
 
     Rotate =  function(){
-        if (!Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation+1 % Shape.Orientations.length)){
+        if (!Board.CheckForCollision(Shape, Xpos, Ypos+1,(Rotation+1) % Shape.Orientations.length)){
             Clear();
             Rotation = (Rotation+1) % Shape.Orientations.length;
             Draw();
@@ -342,7 +347,8 @@ var ActiveBlock = function() {
         MoveLeft: MoveLeft,
         Drop: Drop,
         Rotate: Rotate,
-        Draw: Draw
+        Draw: Draw,
+        Rotation:Rotation
     }
 }();
 
