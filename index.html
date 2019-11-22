@@ -12,13 +12,13 @@
             </div>
             
             <div style="float:left;width:20%;background-color: lightgrey;" id="debug"><strong>Debug</strong></div> 
-            <div style="float:left;width:70%;background-color: black;" id="div-game">The game board
+            <div style="float:left;background-color: black;" id="div-game">
                 <table>
                     <thead>                        
                     </thead>
                     <tbody data-bind="foreach: Rows">
                         <tr>                            
-                            <td data-bind="foreach: Cells"><span width="20px" data-bind="style: {'background-color': Colour}">&nbsp;&nbsp;&nbsp;</span></td>                        
+                            <td data-bind="foreach: Cells"><span  style="margin-right:2px;padding-right: 20px; width:30px;" data-bind="style: {'background-color': Colour}"></span></td>                        
                         </tr>    
                     </tbody>
                 </table>
@@ -42,38 +42,94 @@ var Shapes = {
             ]},
 
     Line:  {
-        Colour: "Blue",
+        Colour: "blue",
         Orientations:[
-              { Pixels:  [   {Xoffset:1, Yoffset:1},
+              { Pixels:  [{Xoffset:1, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
                     {Xoffset:1, Yoffset:2},
-                    {Xoffset:1, Yoffset:3},
-                    {Xoffset:1, Yoffset:4},
+                    {Xoffset:1, Yoffset:3}
                 ]},
-                {Pixels : [   {Xoffset:0, Yoffset:1},
+                {Pixels : [{Xoffset:0, Yoffset:1},
                     {Xoffset:1, Yoffset:1},
                     {Xoffset:2, Yoffset:1},
-                    {Xoffset:3, Yoffset:1},
+                    {Xoffset:3, Yoffset:1}
                 ]}
             ]},
-    LeftL:{},
-
-    RightL:{},
+    LeftL: {
+        Colour: "red",
+        Orientations:[
+            {Pixels:  [{Xoffset:1, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:1, Yoffset:2},
+                    {Xoffset:0, Yoffset:2}
+                ]},
+           {Pixels : [{Xoffset:0, Yoffset:1},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:2, Yoffset:1},
+                    {Xoffset:3, Yoffset:2}
+                ]},
+           {Pixels:  [{Xoffset:0, Yoffset:0},
+                    {Xoffset:1, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:1, Yoffset:2}
+                ]},
+           {Pixels : [{Xoffset:0, Yoffset:2},
+                    {Xoffset:0, Yoffset:1},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:2, Yoffset:1}
+                ]}
+    ]},
+    RightL:{ Colour: "purple",
+             Orientations:[
+            {Pixels:  [{Xoffset:1, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:1, Yoffset:2},
+                    {Xoffset:0, Yoffset:0}
+                ]},
+           {Pixels : [{Xoffset:0, Yoffset:1},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:2, Yoffset:1},
+                    {Xoffset:3, Yoffset:0}
+                ]},
+           {Pixels:  [{Xoffset:1, Yoffset:0},
+                    {Xoffset:2, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:1, Yoffset:2}
+                ]},
+           {Pixels : [{Xoffset:0, Yoffset:0},
+                    {Xoffset:0, Yoffset:1},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:2, Yoffset:1}
+                ]}
+        ]},
 
     LeftZ: {
-        Colour: "Blue",
+        Colour: "orange",
         Orientations: [
                 {Pixels : [{Xoffset:0, Yoffset:0},
                           {Xoffset:1, Yoffset:0},
                           {Xoffset:1, Yoffset:1},
-                          {Xoffset:2, Yoffset:1},
+                          {Xoffset:2, Yoffset:1}
                 ]},
                 {Pixels : [{Xoffset:1, Yoffset:0},
                     {Xoffset:0, Yoffset:1},
                     {Xoffset:1, Yoffset:1},
-                    {Xoffset:0, Yoffset:2},
+                    {Xoffset:0, Yoffset:2}
                 ]}
             ]},
-    RightZ: {}
+    RightZ: {        Colour: "orange",
+        Orientations: [
+                {Pixels : [{Xoffset:1, Yoffset:0},
+                          {Xoffset:2, Yoffset:0},
+                          {Xoffset:0, Yoffset:1},
+                          {Xoffset:1, Yoffset:1}
+                ]},
+                {Pixels : [{Xoffset:1, Yoffset:0},
+                    {Xoffset:1, Yoffset:1},
+                    {Xoffset:1, Yoffset:2},
+                    {Xoffset:20, Yoffset:2}
+                ]}
+            ]}
 };
 
 var Translate = {
@@ -102,16 +158,12 @@ var Event = {
     }
 }
 
-var NextBlock = {
-
-};
-
-var BACKGROUND_COLOUR="black";
+var BACKGROUND_COLOUR="pink";
 
 var Board = function() {
 
     var ColumnCount = 10;
-    var RowsCount = 10;
+    var RowsCount = 20;
    
     var Rows = ko.observableArray();
     
@@ -150,10 +202,10 @@ var Board = function() {
         var collision = false;
 
         shape.Orientations[rotation].Pixels.forEach(function(cell){
-            var row = y + cell.Yoffset ;
-            var col = x + cell.Xoffset
+            var row = y + cell.Yoffset;
+            var col = x + cell.Xoffset;
 
-            if (row < 0 || row > ColumnCount-1 || col >= RowsCount )
+            if (col < 0 || col > ColumnCount-1 || row >= RowsCount )
                 collision = true;
             else if (Board.Rows()[row].Cells()[col].Occupied === true)
                 collision = true;
@@ -163,26 +215,50 @@ var Board = function() {
     };
 
     var BlockLanded = function() {
+        CheckForLines();
+        SetNewBlock();
         return false;
     };
 
     return {
         Rows: Rows,
         CheckForCollision: CheckForCollision,
-        BlockLanded: BlockLanded
+        BlockLanded: BlockLanded,
+        ColumnCount: ColumnCount
     }
 
 }();
 
 
 
-var Game = function(){};
+var Game = function(){
+
+      var getRandomBlock = function (){
+        var randomNumber =  Math.floor((Math.random() * 6));
+        
+        switch(randomNumber){
+             case 0 : return Shapes.Square;
+            case 1 : return Shapes.LeftL;
+            case 2 : return Shapes.RightL;
+            case 3 : return Shapes.LeftZ;
+            case 4 : return Shapes.RightZ;
+            case 5 : return Shapes.Line;
+        }        
+    };    
+
+    var nextBlock = getRandomBlock();
+
+    return {
+        NextBlock: nextBlock,
+        GetRandomBlock: getRandomBlock}
+
+}();
 
 var ActiveBlock = function() {
-    var Shape = Shapes.Square;  //for example
-    var Xpos = 0;
+    var Shape = Game.GetRandomBlock();
+    var Xpos = Math.floor(Board.ColumnCount/2)-1;
     var Ypos = 0;
-    var Rotation = 0;
+    var Rotation = 0;   
 
     MoveDown = function() {
         if (Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation)) //this, Translate (x, y, rot)
@@ -220,9 +296,9 @@ var ActiveBlock = function() {
     };
 
     Rotate =  function(){
-        if (!Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation+1 % Shape.length)){
+        if (!Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation+1 % Shape.Orientations.length)){
             Clear();
-            Rotation = Rotation++ % Shape.length;
+            Rotation = (Rotation+1) % Shape.Orientations.length;
             Draw();
         }
     };
@@ -258,12 +334,15 @@ var ActiveBlock = function() {
         
     };
 
+    Draw();
+
     return {
         MoveDown: MoveDown,
         MoveRight: MoveRight,
         MoveLeft: MoveLeft,
         Drop: Drop,
-        Rotate: Rotate
+        Rotate: Rotate,
+        Draw: Draw
     }
 }();
 
@@ -279,42 +358,13 @@ function Debug(string){
 
 $(function (){
     Debug("ready");
-    setInterval(Event.OnTick,500);
+
+    setInterval(Event.OnTick,1000);
     $(document).on("keydown", function(key) {
         Event.OnKeyDown(key.code);
     });    
+    
 });
-
-var testRow = function(colour){
-    
-    var Colour=ko.observable();
-
-    var setColour=function(c){
-        Colour(c);
-    }
-
-    setColour(colour);
-    
-    //this.Colour=colour;
-
-    return {Colour:Colour,
-    setColour:setColour}
-};
-
-var test = function() {
-
-    var Rows = ko.observableArray();
-    for (var row=0;row<10;row++){      
-        Rows.push(new testRow(row));
-    }
-
-    return {
-        Rows: Rows
-    }
-
-}();
-
-
 
 ko.applyBindings(Board);
 
