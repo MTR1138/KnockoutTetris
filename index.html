@@ -207,16 +207,24 @@ var Board = function() {
 
             if (col < 0 || col > ColumnCount-1 || row >= RowsCount )
                 collision = true;
-            else if (Board.Rows()[row].Cells()[col].Occupied === true)
+            else if (Board.Rows()[row].Cells()[col].Occupied() === true)
                 collision = true;
         });
 
         return collision;
     };
 
+    var checkForLines = function(){
+        //var
+    };
+
+    var setNewBlock = function(){
+
+    };
+
     var BlockLanded = function() {
         CheckForLines();
-        SetNewBlock();
+        ActiveBlock.NewBlock();
         return false;
     };
 
@@ -255,10 +263,18 @@ var Game = function(){
 }();
 
 var ActiveBlock = function() {
-    var Shape = Game.GetRandomBlock();
-    var Xpos = Math.floor(Board.ColumnCount/2)-1;
+    var Shape = null;
+    var Xpos =0;
     var Ypos = 0;
     var Rotation = 0;   
+    
+    var NewBlock = function(){
+        Shape = Game.GetRandomBlock();
+        Xpos = Math.floor(Board.ColumnCount/2)-1;
+        Ypos = 0;
+        Draw();
+    };
+
 
     MoveDown = function() {
         if (Board.CheckForCollision(Shape, Xpos, Ypos+1,Rotation)) {
@@ -295,7 +311,7 @@ var ActiveBlock = function() {
     Drop = function(){
         var landed=false;
         while (!landed){
-            landed = MoveDown;
+            landed = MoveDown();
         }
         Debug("drop");
     };
@@ -330,7 +346,9 @@ var ActiveBlock = function() {
     };
 
     BlockLanded = function(){
-        Draw(true)
+        Draw(true);
+        NewBlock();
+
         //alertalert("Landed!");
         // TODO - pick random shape
         // TODO - check for lines
@@ -339,7 +357,8 @@ var ActiveBlock = function() {
         
     };
 
-    Draw();
+    NewBlock();
+    
 
     return {
         MoveDown: MoveDown,
@@ -348,7 +367,8 @@ var ActiveBlock = function() {
         Drop: Drop,
         Rotate: Rotate,
         Draw: Draw,
-        Rotation:Rotation
+        Rotation:Rotation,
+        NewBlock: NewBlock
     }
 }();
 
