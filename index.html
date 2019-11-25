@@ -154,6 +154,9 @@ var Event = {
             case "ArrowDown": ActiveBlock.Drop();
             break;
             case "ArrowUp": ActiveBlock.Rotate();
+            break;
+            case "KeyX" : ClearRow();
+            break;
         }
     }
 }
@@ -184,16 +187,21 @@ var Board = function() {
         }
     };
 
+    var blankRow = function(){
+
+        var cells = ko.observableArray([]);
+            
+        for (var col=0; col<ColumnCount;col++){
+            cells.push(new cell());
+        }      
+            
+        return {Cells: cells};
+    };
+
     var Init =  function () {
         
         for (var row=0;row<RowsCount;row++){      
-            var cells = ko.observableArray([]);
-            
-            for (var col=0; col<ColumnCount;col++){
-                cells.push(new cell());
-            }      
-            
-            Rows.push({Cells: cells});
+            Rows.push(blankRow());
         }
     }();
 
@@ -215,7 +223,21 @@ var Board = function() {
     };
 
     var checkForLines = function(){
-        //var
+        var lines = 0;
+
+        for(var row=0; row<Board.RowsCount; row++)
+        {
+            var pixels=0;
+            for(var col=0; cell<ColumnCount;col++){
+                if(Rows.Cells()[row].Cells()[col].Occupied())
+                  pixels++
+                if (pixels===ColumnCount){
+                    Rows.splice(row,row);
+                    Rows.push(blankRow());
+                }
+            }
+        }
+        
     };
 
     var setNewBlock = function(){
@@ -382,6 +404,10 @@ function Debug(string){
         $debug.find("div:first").remove();
 }
 
+function ClearRow(){
+    Board.Rows.splice(19,19)
+};
+
 $(function (){
     Debug("ready");
 
@@ -389,7 +415,8 @@ $(function (){
     $(document).on("keydown", function(key) {
         Event.OnKeyDown(key.code);
     });    
-    
+
+       
 });
 
 ko.applyBindings(Board);
