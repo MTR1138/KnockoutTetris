@@ -16,9 +16,9 @@
                 <table>
                     <thead>                        
                     </thead>
-                    <tbody data-bind="foreach: Rows">
+                    <tbody data-bind="foreach: Rows">                        
                         <tr>                            
-                            <td data-bind="foreach: Cells"><span  style="margin-right:2px;padding-right: 20px; width:30px;" data-bind="style: {'background-color': Colour}"></span></td>                        
+                            <td style="background-color: gray;" data-bind="text: $index"></td><td data-bind="foreach: Cells"><span  style="margin-right:2px;padding-right: 20px; width:30px;" data-bind="style: {'background-color': Colour}"></span></td>                        
                         </tr>    
                     </tbody>
                 </table>
@@ -144,7 +144,10 @@ var Event = {
 
     OnTick: function () {
         if (Game.ActionInProgress!==true)
+
+        Game.ActionInProgress=true;
         ActiveBlock.MoveDown();
+        Game.ActionInProgress=false;
     },
 
     OnKeyDown: function (key){
@@ -154,12 +157,12 @@ var Event = {
             break;
             case "ArrowRight": ActiveBlock.MoveRight();
             break;
-            case "ArrowDown": ActiveBlock.Drop();
+            case "ArrowDown": ActiveBlock.MoveDown(); // Drop ?
             break;
             case "ArrowUp": ActiveBlock.Rotate();
-            break;
-            case "KeyX" : ClearRow();
-            break;
+            break;        
+            case "Space": ActiveBlock.Drop();
+            break;        
         }
         Game.ActionInProgress=false;
     }
@@ -238,16 +241,19 @@ var Board = function() {
                 if(Rows()[row].Cells()[col].Occupied())
                   pixels++
                 if (pixels===ColumnCount){
-                    Rows.splice(row,row);                   
+                    Rows.splice(row,1);                   
+                    Debug("Cleared line " + row);
                     lines++;
                 }
             }
         }        
 
-        for (var i=0; i<lines;i++)
-            Rows.push(blankRow());
+        for (var i=0; i<lines;i++){
+            Rows.unshift(blankRow());
+            Debug("Added row");
+        }
 
-        Debug("Cleared " + lines + " lines");
+        Debug("Total Lines " + Board.Rows().length);
     };
 
     function setNewBlock(){
@@ -428,9 +434,6 @@ function Debug(string){
         $debug.find("div:first").remove();
 }
 
-function ClearRow(){
-    Board.Rows.splice(19,19)
-};
 
 $(function (){
     Debug("ready");
